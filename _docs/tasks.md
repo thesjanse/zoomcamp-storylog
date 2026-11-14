@@ -10,7 +10,7 @@ before the scaffold writes tests.
 | Processing order | Backlog | Issue | Title | Status |
 | --- | --- | --- | --- | --- |
 | 1 | 2 | #2 | [2] Write testing guidelines | Closed |
-| 2 | 1 | #1 | [1] Scaffold backend and frontend with passing tests | Open |
+| 2 | 1 | #1 | [1] Scaffold backend and frontend with passing tests | Closed |
 | 3 | 3 | #3 | [3] Define the journal design system | Open |
 
 This run is scoped to the first three issues. The full backlog remains in
