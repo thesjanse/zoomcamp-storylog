@@ -26,7 +26,9 @@ Deletion requires confirmation; deleting an item also deletes its notes.
 
 ## Defaults and boundaries
 
-Use **Django, HTML templates, and SQLite**, with a custom journal interface.
+Use **Django REST Framework for the API, Vue 3 + Vite for the frontend,
+and SQLite**, with a custom journal interface. Keep database access
+behind the Django ORM so SQLite can later be replaced by PostgreSQL.
 
 Exclude sharing, ratings, tags, catalog integrations, covers, page/minute tracking, email verification, and password-reset emails.
 

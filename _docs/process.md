@@ -1,6 +1,14 @@
 - Tasks are GitHub issues, one at a time
 - Read the acceptance criteria before starting and before closing
 - Commit regularly
+- Every role reads `_docs/AGENTS.md`, this file, and its role document before acting
+
+Backlog
+
+- Process issues in numeric order unless a dependency requires another order
+- When the processing order differs from the issue numbers, record it in `_docs/tasks.md`
+- Issue titles carry their backlog position, for example `[1] ...`, because GitHub cannot renumber issues
+- A run may be limited to a fixed set of issues; that scope overrides the repeat rule below
 
 Roles
 
@@ -29,3 +37,7 @@ Rules
 - The engineer does not close the issue
 - QA does not fix the code, only outputs PASS or FAIL
 - The orchestrator closes the issue only after QA outputs PASS
+- Only the orchestrator changes issue state or closes issues
+- PM commits only documentation changes; the engineer commits code and tests; QA commits nothing
+- Work on the current branch. Do not open a PR or push unless asked
+- If QA fails the same issue three times in a row, stop and ask the user
