@@ -11,7 +11,7 @@ before the scaffold writes tests.
 | --- | --- | --- | --- | --- |
 | 1 | 2 | #2 | [2] Write testing guidelines | Closed |
 | 2 | 1 | #1 | [1] Scaffold backend and frontend with passing tests | Closed |
-| 3 | 3 | #3 | [3] Define the journal design system | Open |
+| 3 | 3 | #3 | [3] Define the journal design system | Closed |
 
 This run is scoped to the first three issues. The full backlog remains in
 GitHub. #2 is documentation-only: the scaffold, browser test tooling, and
