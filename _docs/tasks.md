@@ -14,4 +14,5 @@ before the scaffold writes tests.
 | 3 | 3 | #3 | [3] Define the journal design system | Open |
 
 This run is scoped to the first three issues. The full backlog remains in
-GitHub.
+GitHub. #2 is documentation-only: the scaffold, browser test tooling, and
+CI work it describes are tracked by #1, #24, and #26.
