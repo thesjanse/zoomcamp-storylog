@@ -18,4 +18,6 @@ GitHub. #2 is documentation-only: the scaffold, browser test tooling, and
 CI work it describes are tracked by #1, #24, and #26. #1 is scaffold-only:
 it adds a minimal Django project and Vue/Vite app with one smoke test per
 side. DRF, CORS/proxy, and API integration are tracked by #4; journal
-models, authentication, and product screens are tracked by #5-#23.
+models, authentication, and product screens are tracked by #5-#23. #3 is
+documentation-only: it defines the design system tokens, states, and copy
+that #14-#23 apply; it does not add Vue components or change the scaffold.
