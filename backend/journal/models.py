@@ -7,6 +7,11 @@ class JournalItemQuerySet(models.QuerySet):
         return self.filter(owner=user)
 
 
+class NoteQuerySet(models.QuerySet):
+    def for_owner(self, user):
+        return self.filter(item__owner=user)
+
+
 class JournalItem(models.Model):
     class Type(models.TextChoices):
         BOOK = "book", "Book"
@@ -43,3 +48,21 @@ class JournalItem(models.Model):
 
     def __str__(self):
         return self.title
+
+
+class Note(models.Model):
+    item = models.ForeignKey(
+        JournalItem,
+        on_delete=models.CASCADE,
+        related_name="notes",
+    )
+    body = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True, editable=False)
+
+    objects = NoteQuerySet.as_manager()
+
+    class Meta:
+        ordering = ["-created_at", "-id"]
+
+    def __str__(self):
+        return self.body

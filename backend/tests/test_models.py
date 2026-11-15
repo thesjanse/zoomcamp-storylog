@@ -3,9 +3,10 @@ from datetime import date, timedelta
 import pytest
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
+from django.db import IntegrityError
 from django.utils import timezone
 
-from journal.models import JournalItem
+from journal.models import JournalItem, Note
 
 pytestmark = pytest.mark.django_db
 
@@ -278,3 +279,193 @@ def test_validation_rejects_invalid_type_and_status(user):
 
     assert "type" in exc_info.value.message_dict
     assert "status" in exc_info.value.message_dict
+
+
+def test_note_creation_with_required_fields(user):
+    item = JournalItem.objects.create(
+        owner=user,
+        title="The Dispossessed",
+        type=JournalItem.Type.BOOK,
+    )
+    body = "First line\nSecond line"
+
+    note = Note.objects.create(item=item, body=body)
+    note.refresh_from_db()
+
+    assert note.item == item
+    assert note.body == body
+    assert note.created_at is not None
+    assert list(item.notes.all()) == [note]
+
+
+def test_note_requires_item(user):
+    with pytest.raises(IntegrityError):
+        Note.objects.create(body="Orphan note")
+
+
+def test_note_created_at_is_automatic_and_preserved_on_edit(user):
+    item = JournalItem.objects.create(
+        owner=user,
+        title="The Lathe of Heaven",
+        type=JournalItem.Type.BOOK,
+    )
+    note = Note.objects.create(item=item, body="Original body")
+    created_at = note.created_at
+    assert Note._meta.get_field("created_at").editable is False
+
+    note.body = "Edited body"
+    note.save()
+    note.refresh_from_db()
+
+    assert note.body == "Edited body"
+    assert note.created_at == created_at
+
+
+def test_note_default_ordering_is_created_at_descending_then_id_descending(user):
+    item = JournalItem.objects.create(
+        owner=user,
+        title="Ordered Notes",
+        type=JournalItem.Type.BOOK,
+    )
+    first = Note.objects.create(item=item, body="First")
+    second = Note.objects.create(item=item, body="Second")
+    third = Note.objects.create(item=item, body="Third")
+    now = timezone.now()
+    Note.objects.filter(pk=first.pk).update(created_at=now - timedelta(days=1))
+    Note.objects.filter(pk=second.pk).update(created_at=now)
+    Note.objects.filter(pk=third.pk).update(created_at=now)
+
+    assert Note._meta.ordering == ["-created_at", "-id"]
+    assert list(Note.objects.all()) == [third, second, first]
+    assert list(Note.objects.for_owner(user)) == [third, second, first]
+
+
+def test_note_for_owner_returns_only_notes_through_parent_item(user, other_user):
+    own_item = JournalItem.objects.create(
+        owner=user,
+        title="Owned Note Item",
+        type=JournalItem.Type.BOOK,
+    )
+    other_item = JournalItem.objects.create(
+        owner=other_user,
+        title="Other Note Item",
+        type=JournalItem.Type.MOVIE,
+    )
+    own_note = Note.objects.create(item=own_item, body="Own note")
+    other_note = Note.objects.create(item=other_item, body="Other note")
+
+    notes = Note.objects.for_owner(user)
+
+    assert list(notes) == [own_note]
+    assert other_note not in notes
+
+
+def test_note_for_owner_returns_empty_queryset_for_user_without_notes(user):
+    notes = Note.objects.for_owner(user)
+
+    assert notes.count() == 0
+    assert list(notes) == []
+
+
+def test_note_str_returns_body(user):
+    item = JournalItem.objects.create(
+        owner=user,
+        title="String Note",
+        type=JournalItem.Type.BOOK,
+    )
+    note = Note.objects.create(item=item, body="A plain-text note")
+
+    assert str(note) == "A plain-text note"
+
+
+def test_note_validation_rejects_missing_body(user):
+    item = JournalItem.objects.create(
+        owner=user,
+        title="Missing Body",
+        type=JournalItem.Type.BOOK,
+    )
+    note = Note(item=item)
+
+    with pytest.raises(ValidationError) as exc_info:
+        note.full_clean()
+
+    assert "body" in exc_info.value.message_dict
+
+
+def test_note_validation_rejects_blank_body(user):
+    item = JournalItem.objects.create(
+        owner=user,
+        title="Blank Body",
+        type=JournalItem.Type.BOOK,
+    )
+    note = Note(item=item, body="")
+
+    with pytest.raises(ValidationError) as exc_info:
+        note.full_clean()
+
+    assert "body" in exc_info.value.message_dict
+
+
+def test_note_validation_rejects_missing_item(user):
+    note = Note(body="No parent")
+
+    with pytest.raises(ValidationError) as exc_info:
+        note.full_clean()
+
+    assert "item" in exc_info.value.message_dict
+
+
+def test_note_validation_accepts_valid_note(user):
+    item = JournalItem.objects.create(
+        owner=user,
+        title="Valid Note",
+        type=JournalItem.Type.BOOK,
+    )
+    note = Note(item=item, body="Valid body")
+
+    note.full_clean()
+
+
+def test_deleting_item_cascades_to_its_notes_only(user):
+    item = JournalItem.objects.create(
+        owner=user,
+        title="Deleted Item",
+        type=JournalItem.Type.BOOK,
+    )
+    other_item = JournalItem.objects.create(
+        owner=user,
+        title="Preserved Item",
+        type=JournalItem.Type.BOOK,
+    )
+    note = Note.objects.create(item=item, body="Deleted note")
+    other_note = Note.objects.create(item=other_item, body="Preserved note")
+    note_id = note.pk
+    item_id = item.pk
+
+    JournalItem.objects.filter(pk=item_id).delete()
+
+    assert not Note.objects.filter(pk=note_id).exists()
+    assert Note.objects.filter(pk=other_note.pk).exists()
+
+
+def test_deleting_owner_cascades_to_items_and_notes(user, other_user):
+    item = JournalItem.objects.create(
+        owner=user,
+        title="Owner Item",
+        type=JournalItem.Type.BOOK,
+    )
+    other_item = JournalItem.objects.create(
+        owner=other_user,
+        title="Other Owner Item",
+        type=JournalItem.Type.BOOK,
+    )
+    note = Note.objects.create(item=item, body="Owner note")
+    other_note = Note.objects.create(item=other_item, body="Other owner note")
+    note_id = note.pk
+    item_id = item.pk
+
+    user.delete()
+
+    assert not JournalItem.objects.filter(pk=item_id).exists()
+    assert not Note.objects.filter(pk=note_id).exists()
+    assert Note.objects.filter(pk=other_note.pk).exists()
