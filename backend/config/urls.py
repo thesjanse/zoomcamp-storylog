@@ -7,4 +7,9 @@ from . import views
 urlpatterns = [
     path("", views.home, name="home"),
     path("api/v1/health/", views.HealthView.as_view(), name="health"),
+    path(
+        "api/v1/auth/register/",
+        views.RegisterView.as_view(),
+        name="register",
+    ),
 ]
