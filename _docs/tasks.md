@@ -36,7 +36,7 @@ numeric order; #4 adds the DRF/API connection that later API tasks build on.
 | 1 | 4 | #4 | [4] Connect the Vue client to the Django API | Closed |
 | 2 | 5 | #5 | [5] Add the journal item model | Closed |
 | 3 | 6 | #6 | [6] Add the note model with cascade deletion | Closed |
-| 4 | 7 | #7 | Implement the registration API | Open |
+| 4 | 7 | #7 | [7] Implement the registration API | Open |
 | 5 | 8 | #8 | Implement login, logout, and current-user API | Open |
 
 This run is scoped to issues #4-#8 in that order. #4 is API integration and
@@ -44,4 +44,7 @@ status wiring only; journal models, authentication, and product screens are
 tracked by #5-#23 and are not part of #4. #5 is the journal item model,
 migration, and model tests only; #6 is the note model, migration, and model
 tests only. The note API is tracked by #11, the notes UI by #22, item APIs by
-#9-#10, date rules by #12, and search/filtering by #13.
+#9-#10, date rules by #12, and search/filtering by #13. #7 is the registration
+API only: it adds the public register endpoint, DRF authtoken issuance, and API
+tests; login, logout, current-user, and protected-endpoint 401 behavior are
+tracked by #8, the shared API client by #15, and the auth screens by #16.
