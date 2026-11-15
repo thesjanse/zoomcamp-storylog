@@ -12,4 +12,7 @@ urlpatterns = [
         views.RegisterView.as_view(),
         name="register",
     ),
+    path("api/v1/auth/login/", views.LoginView.as_view(), name="login"),
+    path("api/v1/auth/logout/", views.LogoutView.as_view(), name="logout"),
+    path("api/v1/auth/me/", views.MeView.as_view(), name="me"),
 ]

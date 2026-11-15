@@ -1,7 +1,20 @@
-"""Serializers for account registration."""
+"""Serializers for account registration and login."""
 
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
+
+
+class LoginSerializer(serializers.Serializer):
+    """Validate login input without authenticating the credentials.
+
+    ``username`` is trimmed of surrounding whitespace to match registration,
+    while ``password`` is passed through verbatim. Missing, blank, or
+    whitespace-only fields surface as field-level errors; whether the
+    credentials match is decided by the view.
+    """
+
+    username = serializers.CharField(max_length=150)
+    password = serializers.CharField(write_only=True, trim_whitespace=False)
 
 
 class RegisterSerializer(serializers.Serializer):
