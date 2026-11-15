@@ -34,7 +34,7 @@ numeric order; #4 adds the DRF/API connection that later API tasks build on.
 | Processing order | Backlog | Issue | Title | Status |
 | --- | --- | --- | --- | --- |
 | 1 | 4 | #4 | [4] Connect the Vue client to the Django API | Closed |
-| 2 | 5 | #5 | [5] Add the journal item model | Open |
+| 2 | 5 | #5 | [5] Add the journal item model | Closed |
 | 3 | 6 | #6 | Add the note model with cascade deletion | Open |
 | 4 | 7 | #7 | Implement the registration API | Open |
 | 5 | 8 | #8 | Implement login, logout, and current-user API | Open |
