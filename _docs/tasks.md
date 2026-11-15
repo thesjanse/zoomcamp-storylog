@@ -24,7 +24,7 @@ models, authentication, and product screens are tracked by #5-#23. #3 is
 documentation-only: it defines the design system tokens, states, and copy
 that #14-#23 apply; it does not add Vue components or change the scaffold.
 
-## Run 2: issues #4-#8 (current)
+## Run 2: issues #4-#8 (completed)
 
 Backlog order, oldest to newest: #4, #5, #6, #7, #8.
 
@@ -37,7 +37,7 @@ numeric order; #4 adds the DRF/API connection that later API tasks build on.
 | 2 | 5 | #5 | [5] Add the journal item model | Closed |
 | 3 | 6 | #6 | [6] Add the note model with cascade deletion | Closed |
 | 4 | 7 | #7 | [7] Implement the registration API | Closed |
-| 5 | 8 | #8 | [8] Implement login, logout, and current-user API | Open |
+| 5 | 8 | #8 | [8] Implement login, logout, and current-user API | Closed |
 
 This run is scoped to issues #4-#8 in that order. #4 is API integration and
 status wiring only; journal models, authentication, and product screens are
